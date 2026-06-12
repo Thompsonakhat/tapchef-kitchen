@@ -150,7 +150,7 @@ async function getOrCreateTasks(userId, dateKey) {
   try {
     const existing = await db.collection("daily_task_progress").findOne({ telegramUserId: userId, dateKey });
     if (existing) return existing;
-    const doc = { telegramUserId: userId, dateKey, openedToday: true, tasks: taskTemplate(), createdAt: new Date(), updatedAt: new Date() };
+    const doc = { telegramUserId: userId, dateKey, openedToday: true, tasks: taskTemplate(), updatedAt: new Date() };
     doc.tasks.find((t) => t.key === "open_kitchen").progress = 1;
     doc.tasks.find((t) => t.key === "open_kitchen").completed = true;
     await db.collection("daily_task_progress").insertOne(doc);
