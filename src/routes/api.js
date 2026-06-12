@@ -1,6 +1,15 @@
 import express from "express";
 import { validateTelegramInitData } from "../lib/webappAuth.js";
-import { bootstrapPlayer, cookMeal, getLeaderboard, getProfile, tapIngredient } from "../services/game.js";
+import {
+  bootstrapPlayer,
+  buyTheme,
+  cookMeal,
+  getLeaderboard,
+  getProfile,
+  tapIngredient,
+  unlockRecipe,
+  updateSoundSetting
+} from "../services/game.js";
 import { safeErr } from "../lib/utils.js";
 
 const router = express.Router();
@@ -35,7 +44,7 @@ router.post("/game/bootstrap", async (req, res) => {
     const auth = authFrom(req);
     if (!auth.ok || !auth.user?.id) return res.status(401).json({ ok: false, message: "Unauthorized" });
     const state = await bootstrapPlayer(auth.user);
-    const leaderboard = await getLeaderboard(5, String(auth.user.id));
+    const leaderboard = await getLeaderboard(10, String(auth.user.id));
     console.log("[api] bootstrap success");
     res.json({ ok: true, state, leaderboard });
   } catch (err) {
@@ -86,11 +95,49 @@ router.post("/game/leaderboard", async (req, res) => {
   try {
     const auth = authFrom(req);
     if (!auth.ok || !auth.user?.id) return res.status(401).json({ ok: false, message: "Unauthorized" });
-    const leaderboard = await getLeaderboard(20, String(auth.user.id));
+    const leaderboard = await getLeaderboard(10, String(auth.user.id));
     res.json({ ok: true, leaderboard });
   } catch (err) {
     console.error("[api] leaderboard failure", { err: safeErr(err) });
     res.status(500).json({ ok: false, message: "Leaderboard failed" });
+  }
+});
+
+router.post("/game/settings/sound", async (req, res) => {
+  try {
+    const auth = authFrom(req);
+    if (!auth.ok || !auth.user?.id) return res.status(401).json({ ok: false, message: "Unauthorized" });
+    const result = await updateSoundSetting(auth.user, !!req.body?.soundEnabled);
+    res.json(result);
+  } catch (err) {
+    console.error("[api] sound setting failure", { err: safeErr(err) });
+    res.status(500).json({ ok: false, message: "Settings update failed" });
+  }
+});
+
+router.post("/game/recipes/unlock", async (req, res) => {
+  try {
+    const auth = authFrom(req);
+    if (!auth.ok || !auth.user?.id) return res.status(401).json({ ok: false, message: "Unauthorized" });
+    if (!takeRate(`recipe:${auth.user.id}`, 4, 4000)) return res.status(429).json({ ok: false, message: "Slow down" });
+    const result = await unlockRecipe(auth.user, String(req.body?.recipeKey || ""));
+    res.json(result);
+  } catch (err) {
+    console.error("[api] recipe unlock failure", { err: safeErr(err) });
+    res.status(500).json({ ok: false, message: "Recipe unlock failed" });
+  }
+});
+
+router.post("/game/shop/theme", async (req, res) => {
+  try {
+    const auth = authFrom(req);
+    if (!auth.ok || !auth.user?.id) return res.status(401).json({ ok: false, message: "Unauthorized" });
+    if (!takeRate(`theme:${auth.user.id}`, 4, 4000)) return res.status(429).json({ ok: false, message: "Slow down" });
+    const result = await buyTheme(auth.user, String(req.body?.themeKey || ""));
+    res.json(result);
+  } catch (err) {
+    console.error("[api] theme shop failure", { err: safeErr(err) });
+    res.status(500).json({ ok: false, message: "Theme update failed" });
   }
 });
 
