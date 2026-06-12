@@ -2,28 +2,67 @@
   "projectId": "5e752011-c6d2-4a5f-8911-f2fd1738fbae",
   "commands": [
     {
-      "name": "about",
-      "file": "src/commands/about.js"
+      "command": "/about",
+      "description": "Explains what TapChef is and how it works.",
+      "usage": "/about",
+      "examples": [
+        "User: /about → Bot: TapChef is a cooking game for Telegram."
+      ],
+      "notes": "States that Chef Points are fictional only."
     },
     {
-      "name": "help",
-      "file": "src/commands/help.js"
+      "command": "/help",
+      "description": "Shows the public TapChef commands.",
+      "usage": "/help",
+      "examples": [
+        "User: /help → Bot: /start, /help, /play, /profile, /leaderboard, /about"
+      ],
+      "notes": "Short and Telegram-friendly."
     },
     {
-      "name": "leaderboard",
-      "file": "src/commands/leaderboard.js"
+      "command": "/leaderboard",
+      "description": "Shows the top players by Chef Points.",
+      "usage": "/leaderboard",
+      "examples": [
+        "User: /leaderboard → Bot: Top Chefs: 1. Alex — 120"
+      ],
+      "notes": "Also shows the current player's rank when available."
     },
     {
-      "name": "play",
-      "file": "src/commands/play.js"
+      "command": "/play",
+      "description": "Opens the TapChef Telegram Mini App.",
+      "usage": "/play",
+      "examples": [
+        "User: /play → Bot: Your kitchen is ready."
+      ],
+      "notes": "Sends a Telegram Web App button."
     },
     {
-      "name": "profile",
-      "file": "src/commands/profile.js"
+      "command": "/profile",
+      "description": "Shows points, energy, streak, meals, and today task progress.",
+      "usage": "/profile",
+      "examples": [
+        "User: /profile → Bot: Chef Points: 42, Energy: 18/30, Streak: 3"
+      ],
+      "notes": "Uses server-authoritative game state."
     },
     {
-      "name": "start",
-      "file": "src/commands/start.js"
+      "command": "/start",
+      "description": "Welcomes the user and explains TapChef.",
+      "usage": "/start",
+      "examples": [
+        "User: /start → Bot: Welcome to TapChef. Tap ingredients, cook meals, finish daily tasks, and climb the Chef Points leaderboard."
+      ],
+      "notes": "Also shows the Mini App button when the Mini App URL is configured."
+    },
+    {
+      "command": "/reset",
+      "description": "Clears helper chat memory for the user.",
+      "usage": "/reset",
+      "examples": [
+        "User: /reset → Bot: Helper memory cleared."
+      ],
+      "notes": "Does not delete game progress."
     }
   ],
   "aiMessages": [
@@ -41,6 +80,22 @@
       "id": "msg_mqa9r3rh_9ofn1x",
       "createdAt": "2026-06-12T01:49:52.946Z",
       "kind": "agent_request",
+      "source": "generatedbot"
+    },
+    {
+      "role": "user",
+      "content": "hey i got an error duing build and deploy please check and fix"
+    },
+    {
+      "role": "assistant",
+      "content": "Fixed the Vite build error by restoring the Mini App entry script in webapp/index.html. It was incorrectly pointing to /app/assets/index.js during build, which does not exist until after Vite outputs files. The file now points to /src/main.jsx so Vite can resolve and bundle the app correctly.\n\nFiles touched (3): .env.sample, package.json, webapp/index.html\nValidation: ✅ project passes syntax/basic checks after this edit."
+    },
+    {
+      "role": "assistant",
+      "content": "Fix complete. I investigated the issue and applied a targeted update.\n\nReview the project files and test the changed behavior.\n\nFiles changed:\n- .env.sample\n- package.json\n- webapp/index.html\n- src/lib/ai.js\n\nCost summary:\n- Charged: $0.25\n- Balance: $10150.02",
+      "id": "local_mqa9rso4_arf7x1",
+      "createdAt": "2026-06-12T01:50:26.020Z",
+      "kind": "agent_result",
       "source": "generatedbot"
     }
   ],
@@ -233,5 +288,6 @@
       ],
       "notes": "Does not delete game progress."
     }
-  ]
+  ],
+  "title": "TapChef Kitchen"
 }
