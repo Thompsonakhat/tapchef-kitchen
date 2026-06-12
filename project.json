@@ -73,6 +73,14 @@
     {
       "role": "assistant",
       "content": "Built the first complete TapChef version as a single Telegram bot plus Mini App service with commands, server-authoritative game APIs, Mongo-backed persistence with safe in-memory fallback, long polling, and a mobile-first React Mini App.\n\nFiles touched (33): .env.sample, DOCS.md, README.md, package.json, project.json, src/bot.js…\nValidation: ✅ project passes syntax/basic checks after this edit."
+    },
+    {
+      "role": "user",
+      "content": "hey i got an error duing build and deploy please check and fix",
+      "id": "msg_mqa9r3rh_9ofn1x",
+      "createdAt": "2026-06-12T01:49:52.946Z",
+      "kind": "agent_request",
+      "source": "generatedbot"
     }
   ],
   "createdBy": "695397c85603fcac4c8ea626",
@@ -264,6 +272,5 @@
       ],
       "notes": "Does not delete game progress."
     }
-  ],
-  "title": "TapChef Kitchen"
+  ]
 }
