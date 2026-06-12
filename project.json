@@ -1,0 +1,269 @@
+{
+  "projectId": "5e752011-c6d2-4a5f-8911-f2fd1738fbae",
+  "commands": [
+    {
+      "command": "/about",
+      "description": "Explains what TapChef is and how it works.",
+      "usage": "/about",
+      "examples": [
+        "User: /about → Bot: TapChef is a cooking game for Telegram."
+      ],
+      "notes": "States that Chef Points are fictional only."
+    },
+    {
+      "command": "/help",
+      "description": "Shows the public TapChef commands.",
+      "usage": "/help",
+      "examples": [
+        "User: /help → Bot: /start, /help, /play, /profile, /leaderboard, /about"
+      ],
+      "notes": "Short and Telegram-friendly."
+    },
+    {
+      "command": "/leaderboard",
+      "description": "Shows the top players by Chef Points.",
+      "usage": "/leaderboard",
+      "examples": [
+        "User: /leaderboard → Bot: Top Chefs: 1. Alex — 120"
+      ],
+      "notes": "Also shows the current player's rank when available."
+    },
+    {
+      "command": "/play",
+      "description": "Opens the TapChef Telegram Mini App.",
+      "usage": "/play",
+      "examples": [
+        "User: /play → Bot: Your kitchen is ready."
+      ],
+      "notes": "Sends a Telegram Web App button."
+    },
+    {
+      "command": "/profile",
+      "description": "Shows points, energy, streak, meals, and today task progress.",
+      "usage": "/profile",
+      "examples": [
+        "User: /profile → Bot: Chef Points: 42, Energy: 18/30, Streak: 3"
+      ],
+      "notes": "Uses server-authoritative game state."
+    },
+    {
+      "command": "/start",
+      "description": "Welcomes the user and explains TapChef.",
+      "usage": "/start",
+      "examples": [
+        "User: /start → Bot: Welcome to TapChef. Tap ingredients, cook meals, finish daily tasks, and climb the Chef Points leaderboard."
+      ],
+      "notes": "Also shows the Mini App button when the Mini App URL is configured."
+    },
+    {
+      "command": "/reset",
+      "description": "Clears helper chat memory for the user.",
+      "usage": "/reset",
+      "examples": [
+        "User: /reset → Bot: Helper memory cleared."
+      ],
+      "notes": "Does not delete game progress."
+    }
+  ],
+  "aiMessages": [
+    {
+      "role": "user",
+      "content": "Build a Telegram Mini App game called TapChef.\n\nTapChef is a fun cooking-themed mobile game for Telegram users. Users tap ingredients, cook meals, earn Chef Points, complete daily cooking tasks, and climb a leaderboard.\n\nCore idea:\nUsers open the Telegram Mini App and tap ingredients to prepare meals. Every tap earns Chef Points. The game should feel playful, polished, and mobile-friendly.\n\nMain features:\n- A Telegram bot with /start, /help, /play, /profile, /leaderboard, and /about commands.\n- /start should welcome the user and explain TapChef clearly.\n- /play should open the Telegram Mini App.\n- The Mini App should have a clean mobile game interface with a cooking theme.\n- Users can tap a main ingredient button to earn Chef Points.\n- Add an energy system so users cannot tap forever.\n- Add daily cooking tasks such as “tap 50 ingredients”, “cook 3 meals”, and “open the kitchen today”.\n- Add a daily streak system.\n- Add a leaderboard showing top players by Chef Points.\n- Add a profile screen showing points, energy, streak, meals cooked, and completed tasks.\n- Store each user’s points, energy, streak, meals, tasks, and leaderboard data separately.\n- Keep all responses short, clear, and mobile-friendly for Telegram.\n\nImportant rules:\n- Use fictional Chef Points only.\n- Do not include real money, wallets, crypto, or token rewards.\n- Do not promise earnings.\n- Make the bot and Mini App ready for deployment with clean setup instructions, environment variable examples, and a clear project structure.\n\nMake the game professional, fun, and simple enough for Telegram communities to use daily."
+    },
+    {
+      "role": "assistant",
+      "content": "Built the first complete TapChef version as a single Telegram bot plus Mini App service with commands, server-authoritative game APIs, Mongo-backed persistence with safe in-memory fallback, long polling, and a mobile-first React Mini App.\n\nFiles touched (33): .env.sample, DOCS.md, README.md, package.json, project.json, src/bot.js…\nValidation: ✅ project passes syntax/basic checks after this edit."
+    }
+  ],
+  "createdBy": "695397c85603fcac4c8ea626",
+  "source": "ai-cold-start",
+  "description": "",
+  "platform": "telegram",
+  "usesWebApp": false,
+  "telegramKind": "bot",
+  "planMarkdown": "Bot: TapChef Kitchen\n\nSummary:\nTapChef Kitchen is a Telegram Mini App game centered on tapping ingredients, cooking meals, completing daily tasks, and competing on a Chef Points leaderboard. The system uses a single Node.js ESM service with grammY for bot interactions, a Mini App web frontend for gameplay, and MongoDB for persistent player progress, daily resets, streaks, tasks, and leaderboard data. The design keeps gameplay fast, mobile-friendly, and fair with server-authoritative point and energy logic.\n\nProduct goals:\nBuild a lightweight, polished Telegram Mini App game that feels fun in short daily sessions. Players should easily understand the loop: open the kitchen, tap ingredients, spend energy, earn Chef Points, complete daily cooking tasks, maintain a streak, and compare progress on the leaderboard. The experience should be mobile-first, quick to load, and simple enough for broad Telegram community adoption. The bot should act as the entry point and companion layer, while the Mini App handles the interactive game UI.\n\nHigh-level architecture:\nUse a single Node.js ESM service that exposes both the grammY bot and HTTP endpoints for the Telegram Mini App backend. The bot handles commands, deep links, notifications, and user-friendly summaries. The web layer serves the Mini App frontend and JSON APIs used by the game. MongoDB stores player profiles, tap actions summary state, energy state, daily task progress, streaks, and leaderboard snapshots if needed. The backend should be server-authoritative: the Mini App sends gameplay intents such as tap ingredient or cook meal, and the server validates energy, applies cooldown or regeneration rules, updates points and task counters, and returns the latest game state. A scheduled in-process job can handle daily task generation/reset, streak boundary handling, and optional leaderboard cache refresh. Since this is a single service, keep modules cleanly separated: bot, web, game logic, persistence, auth/validation, and scheduled jobs. Telegram Web App init data should be validated on the server before allowing state-changing actions. Static assets for the Mini App can be served from the same service or from object storage/filesystem storage, while gameplay state remains in MongoDB.\n\nData model:\nCore collections should include: users, dailytaskprogress, and optionally leaderboardcache and gameevents. The users collection stores Telegram user identity, username/display info, totalChefPoints, currentEnergy, maxEnergy, lastEnergyUpdateAt, streakCount, streakLastClaimedDate or lastActiveGameDate, mealsCooked, totalTaps, createdAt, updatedAt, and settings/profile metadata. Daily task progress should be stored per user per day with task date, task definitions, progress counters, completion flags, reward claim flags if rewards are used, and whether the user opened the kitchen that day. Tasks can be generated from a fixed catalog such as tap 50 ingredients, cook 3 meals, and open the kitchen today. A lightweight gameevents collection is optional for auditability, abuse review, and analytics, storing summarized actions like taps, meals cooked, and session opens rather than every raw tap if scale becomes a concern. Leaderboard can be derived live from users.totalChefPoints with indexed queries; an optional leaderboardcache collection can store precomputed top players for faster reads. Use unique indexes on Telegram user id and compound indexes for daily task progress by user/date.\n\nKey flows:\n1) On /start: create or upsert the user, send a short welcome message explaining Chef Points, energy, tasks, streaks, and how to open /play. 2) On /play: return an inline keyboard button that opens the Mini App. 3) Mini App bootstrap: client passes Telegram Web App init data, backend validates it, creates user if needed, calculates regenerated energy from lastEnergyUpdateAt, loads today’s tasks, streak state, profile summary, and leaderboard preview, then returns the initial game state. 4) Tap ingredient flow: client sends a tap action; backend validates session, computes current energy, rejects if no energy, decrements energy, increments total taps and Chef Points, updates daily task counters, may increment meal progress, and returns updated points, energy, and task progress. 5) Cook meal flow: when enough ingredient taps or recipe conditions are met, client requests cook meal; backend validates requirements, increments mealsCooked, awards Chef Points if applicable, updates daily tasks, and returns refreshed state. 6) Daily task flow: on first open each day, generate or load today’s tasks and mark open-the-kitchen progress. Completing tasks updates progress immediately; claim handling can be automatic or implicit to keep UX simple. 7) Streak flow: when a player opens the game on consecutive calendar days in the chosen timezone strategy, increment streak; if a day is missed, reset streak to 1 on next valid day. 8) Leaderboard flow: /leaderboard and Mini App leaderboard screen fetch top users by totalChefPoints with the current player’s rank if outside the top list. 9) Profile flow: /profile and Mini App profile screen show Chef Points, current energy, streak, meals cooked, tasks completed today, and lifetime stats. 10) Abuse control: rate-limit gameplay endpoints per user, validate Telegram init data, ignore impossible client payloads, and keep score calculation exclusively on the server.\n\nTech stack:\nNode.js with ESM modules for the single runtime service. grammY for Telegram bot command handling and inline keyboards. A lightweight HTTP framework in the same process for serving the Mini App frontend, Telegram webhook or polling endpoints, and game APIs. MongoDB native driver or an ODM for persistence. Telegram Web Apps for the Mini App container and init data authentication. Frontend can be a small mobile-first web app using a modern component framework or minimal vanilla stack, optimized for quick load and touch interactions. Use environment variables for TELEGRAMBOTTOKEN, MONGODBURI, MINIAPPURL, APPBASEURL, TELEGRAMBOTUSERNAME, PORT, and a secret for validating internal sessions if needed. Static assets should be served locally or from object storage/filesystem storage. Logging should be structured and simple for a single-service deployment.\n\nNon-functional requirements:\nPrioritize low latency and responsive mobile interactions. Keep all bot copy concise and Telegram-friendly. Make gameplay fair by enforcing all point, energy, streak, and task logic on the server. Use idempotent or safely repeatable APIs where possible to handle retries from unstable mobile networks. Support daily resets in a predictable timezone strategy, preferably UTC unless product requirements later demand user-local logic. Index key MongoDB fields to keep profile and leaderboard reads fast. Implement basic per-user rate limiting and request validation to reduce tap spam and abuse. Keep deployment simple: one Node.js service plus MongoDB, with clear environment variable setup, startup steps, webhook/polling configuration, and build instructions for the Mini App frontend. Organize the codebase by domains so the coding phase can cleanly separate bot handlers, Mini App routes, game engine logic, persistence models, and shared validation/utilities.\n\nBot commands:\n• /start — Welcome message and quick intro to TapChef. (usage: /start) [onboarding]\n• /help — Show short instructions and available commands. (usage: /help) [support]\n• /play — Open the TapChef Mini App game. (usage: /play) [gameplay]\n• /profile — Show your Chef Points, energy, streak, meals, and tasks summary. (usage: /profile) [player]\n• /leaderboard — Show top players by Chef Points. (usage: /leaderboard) [social]\n• /about — Explain what TapChef is and how the game works. (usage: /about) [info]\n",
+  "planSections": {
+    "productGoals": "Build a lightweight, polished Telegram Mini App game that feels fun in short daily sessions. Players should easily understand the loop: open the kitchen, tap ingredients, spend energy, earn Chef Points, complete daily cooking tasks, maintain a streak, and compare progress on the leaderboard. The experience should be mobile-first, quick to load, and simple enough for broad Telegram community adoption. The bot should act as the entry point and companion layer, while the Mini App handles the interactive game UI.",
+    "highLevelArchitecture": "Use a single Node.js ESM service that exposes both the grammY bot and HTTP endpoints for the Telegram Mini App backend. The bot handles commands, deep links, notifications, and user-friendly summaries. The web layer serves the Mini App frontend and JSON APIs used by the game. MongoDB stores player profiles, tap actions summary state, energy state, daily task progress, streaks, and leaderboard snapshots if needed. The backend should be server-authoritative: the Mini App sends gameplay intents such as tap ingredient or cook meal, and the server validates energy, applies cooldown or regeneration rules, updates points and task counters, and returns the latest game state. A scheduled in-process job can handle daily task generation/reset, streak boundary handling, and optional leaderboard cache refresh. Since this is a single service, keep modules cleanly separated: bot, web, game logic, persistence, auth/validation, and scheduled jobs. Telegram Web App init data should be validated on the server before allowing state-changing actions. Static assets for the Mini App can be served from the same service or from object storage/filesystem storage, while gameplay state remains in MongoDB.",
+    "dataModel": "Core collections should include: users, dailytaskprogress, and optionally leaderboardcache and gameevents. The users collection stores Telegram user identity, username/display info, totalChefPoints, currentEnergy, maxEnergy, lastEnergyUpdateAt, streakCount, streakLastClaimedDate or lastActiveGameDate, mealsCooked, totalTaps, createdAt, updatedAt, and settings/profile metadata. Daily task progress should be stored per user per day with task date, task definitions, progress counters, completion flags, reward claim flags if rewards are used, and whether the user opened the kitchen that day. Tasks can be generated from a fixed catalog such as tap 50 ingredients, cook 3 meals, and open the kitchen today. A lightweight gameevents collection is optional for auditability, abuse review, and analytics, storing summarized actions like taps, meals cooked, and session opens rather than every raw tap if scale becomes a concern. Leaderboard can be derived live from users.totalChefPoints with indexed queries; an optional leaderboardcache collection can store precomputed top players for faster reads. Use unique indexes on Telegram user id and compound indexes for daily task progress by user/date.",
+    "keyFlows": "1) On /start: create or upsert the user, send a short welcome message explaining Chef Points, energy, tasks, streaks, and how to open /play. 2) On /play: return an inline keyboard button that opens the Mini App. 3) Mini App bootstrap: client passes Telegram Web App init data, backend validates it, creates user if needed, calculates regenerated energy from lastEnergyUpdateAt, loads today’s tasks, streak state, profile summary, and leaderboard preview, then returns the initial game state. 4) Tap ingredient flow: client sends a tap action; backend validates session, computes current energy, rejects if no energy, decrements energy, increments total taps and Chef Points, updates daily task counters, may increment meal progress, and returns updated points, energy, and task progress. 5) Cook meal flow: when enough ingredient taps or recipe conditions are met, client requests cook meal; backend validates requirements, increments mealsCooked, awards Chef Points if applicable, updates daily tasks, and returns refreshed state. 6) Daily task flow: on first open each day, generate or load today’s tasks and mark open-the-kitchen progress. Completing tasks updates progress immediately; claim handling can be automatic or implicit to keep UX simple. 7) Streak flow: when a player opens the game on consecutive calendar days in the chosen timezone strategy, increment streak; if a day is missed, reset streak to 1 on next valid day. 8) Leaderboard flow: /leaderboard and Mini App leaderboard screen fetch top users by totalChefPoints with the current player’s rank if outside the top list. 9) Profile flow: /profile and Mini App profile screen show Chef Points, current energy, streak, meals cooked, tasks completed today, and lifetime stats. 10) Abuse control: rate-limit gameplay endpoints per user, validate Telegram init data, ignore impossible client payloads, and keep score calculation exclusively on the server.",
+    "techStack": "Node.js with ESM modules for the single runtime service. grammY for Telegram bot command handling and inline keyboards. A lightweight HTTP framework in the same process for serving the Mini App frontend, Telegram webhook or polling endpoints, and game APIs. MongoDB native driver or an ODM for persistence. Telegram Web Apps for the Mini App container and init data authentication. Frontend can be a small mobile-first web app using a modern component framework or minimal vanilla stack, optimized for quick load and touch interactions. Use environment variables for TELEGRAMBOTTOKEN, MONGODBURI, MINIAPPURL, APPBASEURL, TELEGRAMBOTUSERNAME, PORT, and a secret for validating internal sessions if needed. Static assets should be served locally or from object storage/filesystem storage. Logging should be structured and simple for a single-service deployment.",
+    "nonFunctional": "Prioritize low latency and responsive mobile interactions. Keep all bot copy concise and Telegram-friendly. Make gameplay fair by enforcing all point, energy, streak, and task logic on the server. Use idempotent or safely repeatable APIs where possible to handle retries from unstable mobile networks. Support daily resets in a predictable timezone strategy, preferably UTC unless product requirements later demand user-local logic. Index key MongoDB fields to keep profile and leaderboard reads fast. Implement basic per-user rate limiting and request validation to reduce tap spam and abuse. Keep deployment simple: one Node.js service plus MongoDB, with clear environment variable setup, startup steps, webhook/polling configuration, and build instructions for the Mini App frontend. Organize the codebase by domains so the coding phase can cleanly separate bot handlers, Mini App routes, game engine logic, persistence models, and shared validation/utilities."
+  },
+  "planCommands": [
+    {
+      "name": "/start",
+      "description": "Welcome message and quick intro to TapChef.",
+      "usage": "/start",
+      "category": "onboarding"
+    },
+    {
+      "name": "/help",
+      "description": "Show short instructions and available commands.",
+      "usage": "/help",
+      "category": "support"
+    },
+    {
+      "name": "/play",
+      "description": "Open the TapChef Mini App game.",
+      "usage": "/play",
+      "category": "gameplay"
+    },
+    {
+      "name": "/profile",
+      "description": "Show your Chef Points, energy, streak, meals, and tasks summary.",
+      "usage": "/profile",
+      "category": "player"
+    },
+    {
+      "name": "/leaderboard",
+      "description": "Show top players by Chef Points.",
+      "usage": "/leaderboard",
+      "category": "social"
+    },
+    {
+      "name": "/about",
+      "description": "Explain what TapChef is and how the game works.",
+      "usage": "/about",
+      "category": "info"
+    }
+  ],
+  "envVarDocs": [
+    {
+      "key": "TELEGRAM_BOT_TOKEN",
+      "title": "Telegram Bot Token",
+      "description": "Used to start the Telegram bot and validate Telegram Mini App init data.",
+      "usage": "Read in src/lib/config.js and required at startup.",
+      "howToGet": "Create a bot with BotFather and copy the token.",
+      "example": "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11",
+      "isSecret": true,
+      "required": true
+    },
+    {
+      "key": "MONGODB_URI",
+      "title": "MongoDB Connection String",
+      "description": "Stores users, daily tasks, leaderboard data, events, and helper memory.",
+      "usage": "Read in src/lib/config.js and used by src/lib/db.js.",
+      "howToGet": "Create a MongoDB database and copy its connection URI.",
+      "example": "mongodb+srv://user:pass@cluster.example.mongodb.net/tapchef",
+      "isSecret": true,
+      "required": false
+    },
+    {
+      "key": "PUBLIC_BASE_URL",
+      "title": "Public Base URL",
+      "description": "Base deployed service URL used to build the Telegram Mini App URL.",
+      "usage": "The app appends /app in code. Do not include /app in the env value.",
+      "howToGet": "Use your deployed Render service URL.",
+      "example": "https://your-service.onrender.com",
+      "isSecret": false,
+      "required": false
+    },
+    {
+      "key": "PORT",
+      "title": "HTTP Port",
+      "description": "Port for the Node server that serves the bot backend and Mini App.",
+      "usage": "Defaults to 3000 when missing.",
+      "howToGet": "Usually provided by Render automatically.",
+      "example": "3000",
+      "isSecret": false,
+      "required": false
+    },
+    {
+      "key": "AI_TIMEOUT_MS",
+      "title": "AI Timeout",
+      "description": "Timeout for optional helper AI responses.",
+      "usage": "Defaults to 600000.",
+      "howToGet": "Set manually if you want a custom timeout.",
+      "example": "600000",
+      "isSecret": false,
+      "required": false
+    },
+    {
+      "key": "COOKMYBOTS_AI_ENDPOINT",
+      "title": "CookMyBots AI Endpoint",
+      "description": "Optional base URL for helper AI chat about the bot.",
+      "usage": "If missing, the bot still runs and the helper agent stays inactive.",
+      "howToGet": "Provided by CookMyBots.",
+      "example": "https://api.cookmybots.com/api/ai",
+      "isSecret": false,
+      "required": false
+    },
+    {
+      "key": "COOKMYBOTS_AI_KEY",
+      "title": "CookMyBots AI Key",
+      "description": "Optional key for helper AI chat.",
+      "usage": "Used only when helper AI is enabled.",
+      "howToGet": "Provided by CookMyBots.",
+      "example": "cmb_************************",
+      "isSecret": true,
+      "required": false
+    }
+  ],
+  "commandDocs": [
+    {
+      "command": "/start",
+      "description": "Welcomes the user and explains TapChef.",
+      "usage": "/start",
+      "examples": [
+        "User: /start → Bot: Welcome to TapChef. Tap ingredients, cook meals, finish daily tasks, and climb the Chef Points leaderboard."
+      ],
+      "notes": "Also shows the Mini App button when the Mini App URL is configured."
+    },
+    {
+      "command": "/help",
+      "description": "Shows the public TapChef commands.",
+      "usage": "/help",
+      "examples": [
+        "User: /help → Bot: /start, /help, /play, /profile, /leaderboard, /about"
+      ],
+      "notes": "Short and Telegram-friendly."
+    },
+    {
+      "command": "/play",
+      "description": "Opens the TapChef Telegram Mini App.",
+      "usage": "/play",
+      "examples": [
+        "User: /play → Bot: Your kitchen is ready."
+      ],
+      "notes": "Sends a Telegram Web App button."
+    },
+    {
+      "command": "/profile",
+      "description": "Shows points, energy, streak, meals, and today task progress.",
+      "usage": "/profile",
+      "examples": [
+        "User: /profile → Bot: Chef Points: 42, Energy: 18/30, Streak: 3"
+      ],
+      "notes": "Uses server-authoritative game state."
+    },
+    {
+      "command": "/leaderboard",
+      "description": "Shows the top players by Chef Points.",
+      "usage": "/leaderboard",
+      "examples": [
+        "User: /leaderboard → Bot: Top Chefs: 1. Alex — 120"
+      ],
+      "notes": "Also shows the current player's rank when available."
+    },
+    {
+      "command": "/about",
+      "description": "Explains what TapChef is and how it works.",
+      "usage": "/about",
+      "examples": [
+        "User: /about → Bot: TapChef is a cooking game for Telegram."
+      ],
+      "notes": "States that Chef Points are fictional only."
+    },
+    {
+      "command": "/reset",
+      "description": "Clears helper chat memory for the user.",
+      "usage": "/reset",
+      "examples": [
+        "User: /reset → Bot: Helper memory cleared."
+      ],
+      "notes": "Does not delete game progress."
+    }
+  ],
+  "title": "TapChef Kitchen"
+}

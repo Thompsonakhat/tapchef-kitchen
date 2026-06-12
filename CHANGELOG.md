@@ -1,0 +1,9 @@
+# Changelog
+
+All notable changes to this bot project are recorded here.
+
+## 2026-06-12 01:45:44. UTC
+- Request: Build a Telegram Mini App game called TapChef. TapChef is a fun cooking-themed mobile game for Telegram users. Users tap ingredients, cook meals, earn Chef Points, complete daily cooking tasks, and climb a leaderboard. …
+- Summary: Built the first complete TapChef version as a single Telegram bot plus Mini App service with commands, server-authoritative game APIs, Mongo-backed persistence with safe in-memory fallback, long polling, and a mobile-fi…
+- Files: .env.sample, DOCS.md, README.md, package.json, project.json, src/bot.js, src/commands/about.js, src/commands/help.js, src/commands/leaderboard.js, src/commands/loader.js, src/commands/play.js, src/commands/profile.js, src/commands/start.js, src/features/agent…
+
